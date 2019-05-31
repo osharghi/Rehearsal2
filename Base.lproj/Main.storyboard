@@ -37,6 +37,9 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <navigationItem key="navigationItem" id="9Np-ao-NRm"/>
+                    <connections>
+                        <segue destination="Pg9-e3-a4o" kind="show" identifier="ToSaveController" id="ILC-li-HCn"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>

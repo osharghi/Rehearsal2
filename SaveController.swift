@@ -51,7 +51,14 @@ class SaveController: UIViewController, UITableViewDelegate, UITableViewDataSour
             
             if (!(firstTextField.text?.isEmpty)!)
             {
-                self.storageManager.saveVersion(title: firstTextField.text!, firstSave: true)
+                self.storageManager.saveSongAndVersion(title: firstTextField.text!)
+                self.fetchSongs()
+                DispatchQueue.main.async {
+                    self.tableView.reloadData()
+                    _ = self.navigationController?.popViewController(animated: true)
+
+                }
+
             }
         })
         
@@ -153,12 +160,12 @@ class SaveController: UIViewController, UITableViewDelegate, UITableViewDataSour
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         let song = songs[indexPath.row]
-        addVersionToSong(title: song.value(forKey: "title") as! String)
+        addVersionToSong(songObj: song)
     }
     
-    func addVersionToSong(title: String)
+    func addVersionToSong(songObj: NSManagedObject)
     {
-        self.storageManager.saveVersion(title: title, firstSave: false)
+        self.storageManager.saveVersion(songObj: songObj)
     }
 
 }
