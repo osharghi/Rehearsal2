@@ -25,6 +25,7 @@ class SaveController: UIViewController, UITableViewDelegate, UITableViewDataSour
         setUpAddButton()
         setUpConstraints()
         setUpBackButton()
+        setUpInstructionsLabel()
         fetchSongs()
         
         if(songs.isEmpty)
@@ -91,22 +92,19 @@ class SaveController: UIViewController, UITableViewDelegate, UITableViewDataSour
             songs = try managedContext.fetch(fetchRequest)
             
             //Printing for test purposes
-            for (_, song) in songs.enumerated() {
-                
-                let versionSet = song.mutableSetValue(forKey: "versions")
-                let title = song.value(forKey: "title") as! String
-                print(title)
-                
-                for (_,version) in versionSet.enumerated(){
-                    
-                    let url = (version as! NSManagedObject).value(forKey: "url") as! String
-                    let num = (version as! NSManagedObject).value(forKey: "num") as! Int
-                    print(url)
-                    print(num)
-                }
-                
-            }
-            
+//            for (_, song) in songs.enumerated() {
+//
+//                let versionSet = song.mutableSetValue(forKey: "versions")
+//                let title = song.value(forKey: "title") as! String
+//                print(title)
+//
+//                for (_,version) in versionSet.enumerated(){
+//                    let url = (version as! NSManagedObject).value(forKey: "lastPathComp") as! String
+//                    let num = (version as! NSManagedObject).value(forKey: "num") as! Int
+//                    print(url)
+//                    print(num)
+//                }
+//            }
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
         }
@@ -114,27 +112,43 @@ class SaveController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     func setUpConstraints()
     {
-        //        tableView.translatesAutoresizingMaskIntoConstraints = false
-        //        let tableViewBottomAnchor = tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
-        //        let tableViewTopAnchor = tableView.topAnchor.constraint(equalTo: self.view.topAnchor)
-        //        let tableViewWidthAnchor = tableView.widthAnchor.constraint(equalTo: self.view.widthAnchor)
-        //        let tableViewHeightAnchor = tableView.heightAnchor.constraint(equalTo: self.view.heightAnchor)
-        //        let tableViewCXAnchor = tableView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
-        //        NSLayoutConstraint.activate([tableViewBottomAnchor, tableViewTopAnchor, tableViewWidthAnchor, tableViewHeightAnchor, tableViewCXAnchor])
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        let tableViewBottomAnchor = tableView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+        let tableViewTopAnchor = tableView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 65) //dependent on height of instructions label
+        let tableViewWidthAnchor = tableView.widthAnchor.constraint(equalTo: self.view.widthAnchor)
+        let tableViewCXAnchor = tableView.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
+        NSLayoutConstraint.activate([tableViewBottomAnchor, tableViewTopAnchor, tableViewWidthAnchor, tableViewCXAnchor])
         tableView.layoutMargins = UIEdgeInsets.zero
         tableView.separatorInset = UIEdgeInsets.zero
+
+    }
+    
+    func setUpInstructionsLabel()
+    {
+        let instructionsLabel = UILabel()
+        instructionsLabel.text = "Select song below to add to version history or click + at top right to add a new song."
+        instructionsLabel.textColor = .black
+        instructionsLabel.textAlignment = .center
+        instructionsLabel.font = UIFont.systemFont(ofSize: 17.0)
+        
+        self.view.addSubview(instructionsLabel)
+        instructionsLabel.translatesAutoresizingMaskIntoConstraints = false
+        let topAnchor = instructionsLabel.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 20)
+        let widthAnchor = instructionsLabel.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 50)
+        let cxAnchor = instructionsLabel.centerXAnchor.constraint(equalTo: self.view.centerXAnchor)
+        instructionsLabel.numberOfLines = 0
+        instructionsLabel.sizeToFit()
+        NSLayoutConstraint.activate([topAnchor, widthAnchor, cxAnchor])
     }
     
     func setUpBackButton()
     {
-        
         let fontSize:CGFloat = 18
         let font:UIFont = UIFont.boldSystemFont(ofSize: fontSize)
         let attributes: [NSAttributedString.Key : Any] = [NSAttributedString.Key.font: font, NSAttributedString.Key.foregroundColor : UIColor.white,]
         let item = UIBarButtonItem.init(title: "CANCEL", style: .plain, target: self, action: #selector(SaveController.cancelPressed))
         item.setTitleTextAttributes(attributes, for: UIControl.State.normal)
         self.navigationItem.leftBarButtonItem = item
-        
     }
     
     @objc func cancelPressed()
@@ -161,6 +175,8 @@ class SaveController: UIViewController, UITableViewDelegate, UITableViewDataSour
         
         let song = songs[indexPath.row]
         addVersionToSong(songObj: song)
+        _ = self.navigationController?.popViewController(animated: true)
+
     }
     
     func addVersionToSong(songObj: NSManagedObject)

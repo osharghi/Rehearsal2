@@ -363,7 +363,7 @@ class ViewController: UIViewController, AVAudioRecorderDelegate {
     
     @objc func libraryPressed()
     {
-        performSegue(withIdentifier: "ToSongLibraryController", sender: self)
+        performSegue(withIdentifier: "ToLibraryController", sender: self)
     }
     
     func toggleSaveButton()

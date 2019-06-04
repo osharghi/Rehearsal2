@@ -45,10 +45,12 @@ class StorageManager
         {
             let counter = UserDefaults.standard.integer(forKey: "Counter")
             let directoryURL = getDocumentsDirectory()
+            print(directoryURL.absoluteString)
             let originPath = directoryURL.appendingPathComponent("recording.m4a")
             let defaultTitle = "Track-" + String(counter)
             let pathTitle = defaultTitle + ".m4a"
             let destinationPath = directoryURL.appendingPathComponent(pathTitle)
+            print(destinationPath.absoluteString)
             try FileManager.default.moveItem(at: originPath, to: destinationPath)
             pathComponent = pathTitle
         }
@@ -204,9 +206,12 @@ class StorageManager
         //Create new version to add
         let version = NSManagedObject(entity: entity, insertInto: managedContext)
         //Obtain date for new version
-        let date = getDate()
+//        let date = getDate()
+        let date = Date()
+        
         //Set URL path component, version number, and date
-        version.setValue(pathComponent, forKey: "url")
+        //Save track-# for lastPathComp. URL is built by calling getDocumentsDirectory() to get entire path structure
+        version.setValue(pathComponent, forKey: "lastPathComp")
         version.setValue(index, forKey: "num")
         version.setValue(date, forKey: "date")
         //Add to set of versions assocaited with song
@@ -229,9 +234,17 @@ class StorageManager
         UserDefaults.standard.set(counter, forKey:"Counter")
     }
     
-    func getDate() -> String
+//    func getDate() -> String
+//    {
+//        let date : Date = Date()
+//        let dateFormatter = DateFormatter()
+//        dateFormatter.dateFormat = "MM/dd/yyyy"
+//        let todaysDate = dateFormatter.string(from: date)
+//        return todaysDate
+//    }
+    
+    func getDate(date: Date) -> String
     {
-        let date : Date = Date()
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MM/dd/yyyy"
         let todaysDate = dateFormatter.string(from: date)
@@ -264,11 +277,13 @@ class StorageManager
                 
                 for (_,version) in versionSet.enumerated(){
                     
-                    let url = (version as! NSManagedObject).value(forKey: "url") as! String
+                    let pathComp = (version as! NSManagedObject).value(forKey: "lastPathComp") as! String
                     let num = (version as! NSManagedObject).value(forKey: "num") as! Int
-                    let date = (version as! NSManagedObject).value(forKey: "date") as! String
+//                    let date = (version as! NSManagedObject).value(forKey: "date") as! String
+                    let date = (version as! NSManagedObject).value(forKey: "date") as! Date
+
                     
-                    let versionStruct = VersionObj(num: num, date: date, url: url, dataObj: version as! NSManagedObject)
+                    let versionStruct = VersionObj(num: num, date: date, lastPathComp: pathComp, dataObj: version as! NSManagedObject)
                     versions.append(versionStruct)
                 }
                 

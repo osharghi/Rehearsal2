@@ -25,14 +25,18 @@ public struct SongObj {
 
 public struct VersionObj {
     var num: Int
-    var date: String
-    var url: String
+//    var date: String
+    var date: Date
+
+    var lastPathComp: String
     let dataObj: NSManagedObject
     
-    public init(num: Int, date: String, url: String, dataObj: NSManagedObject) {
+//    public init(num: Int, date: String, url: String, dataObj: NSManagedObject) {
+    public init(num: Int, date: Date, lastPathComp: String, dataObj: NSManagedObject) {
+
         self.num = num
         self.date = date
-        self.url = url
+        self.lastPathComp = lastPathComp
         self.dataObj = dataObj
     }
 }
